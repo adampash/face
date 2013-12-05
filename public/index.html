@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Motion detection</title>
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Helvetica;
+}
+#animation {
+}
+
+.toggles {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+
+.grayscale {
+  -webkit-filter: grayscale(100%);
+}
+
+.toggle {
+  padding: 15px;
+  border: 1px solid black;
+  margin: 1px;
+  background: rgba(100, 20, 20, 1);
+  color: white;
+  cursor: pointer;
+}
+
+.toggle.active {
+  /* background: green; */
+  background: rgba(20, 20, 100, 1);
+}
+</style>
+<script src="js/jquery.js"></script>
+<script src="js/balls.js"></script>
+<script src="js/app.js"></script>
+</head>
+
+<body>
+  <canvas id="animation" style=""></canvas>
+  <canvas id="motionCanvas"></canvas>
+  <!-- <canvas id="m_canvas" style=""></canvas> -->
+  <!-- <div class="toggles"> -->
+  <!--   <div id="removeBackground" class="toggle">removeBackground</div> -->
+  <!-- </div> -->
+  <video id="video" height="700" width="1280" style="display:none;"></video>
+</body>
+
+</html>

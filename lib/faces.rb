@@ -6,6 +6,7 @@ module Faces
   attach_function :detect_faces, [:string, :string], :string
 
   def self.faces_in(image)
+    # detect_faces(image, nil)
     keys = [:x,:y,:width,:height]
     detect_faces(image, nil).split("n").map do |e|
       vals = e.split(';').map(&:to_i)
@@ -13,12 +14,3 @@ module Faces
     end
   end
 end
-
-describe Faces do
-  it "counts all the faces" do
-    expect(Faces.faces_in('group.jpg').count).to eq 11
-  end
-end
-
-# p Faces.faces_in('test.jpg')
-# p Faces.faces_in('group.jpg').count
