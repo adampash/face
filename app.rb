@@ -9,7 +9,7 @@ end
 post '/' do
   puts params.to_s
   image = params['upload'][:tempfile].path
+  # image = 'img.png'
   response = Faces.faces_in(image).to_json
-
   response
 end

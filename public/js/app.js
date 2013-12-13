@@ -1,26 +1,22 @@
-var canvas, motionCanvas, backCanvas, context, motionContext, backContext, webcam, lastData, circles;
+var canvas, backCanvas, context, backContext, webcam, lastData, circles, littleCanvas, littleContext;
 
 var faceCoords = [];
-var faceCheck = 10;
-var toggles = {
-};
+var faceCheck = 9;
+var scale = 3;
 
 window.onload = function() {
-  canvas = document.getElementById('animation');
-  canvas.height = $(window).height();
-  canvas.width = $(window).width();
+  canvas = document.getElementById('main');
   context = Context = canvas.getContext('2d');
-  motionCanvas = document.getElementById('motionCanvas');
-  motionCanvas.height = $('#video').height() / 4;
-  motionCanvas.width = $('#video').width() / 4;
-  motionContext = Context = motionCanvas.getContext('2d');
-  backCanvas = document.createElement('canvas');
-  backContext = canvas.getContext('2d');
   webcam = document.getElementById('video');
+  littleCanvas = document.getElementById('little');
+  littleContext = littleCanvas.getContext('2d');
 }
 
+var dataURL;
 function checkFace() {
-  var dataURL = canvas.toDataURL();
+  dataURL = littleCanvas.toDataURL();
+  // dataURL = canvas.toDataURL();
+
   var blobBin = atob(dataURL.split(',')[1]);
   var array = [];
   for(var i = 0; i < blobBin.length; i++) {
@@ -38,6 +34,11 @@ function checkFace() {
     contentType: false,
   }).done(function(response){
     faceCoords = JSON.parse(response);
+    faceCoords.map(function(obj, index) {
+      for (key in obj) {
+        obj[key] = obj[key] * scale;
+      }
+    });
   });
 }
 
@@ -57,11 +58,14 @@ function draw() {
     clearWindow();
     // backContext.translate(canvas.width, 0);
     // backContext.scale(-1, 1);
-    backContext.drawImage(webcam,0,0);
+    context.drawImage(webcam,0,0);
+    littleContext.drawImage(webcam,0,0, littleCanvas.width, littleCanvas.height);
     // context.translate(canvas.width, 0);
     // context.scale(-1, 1);
     if (faceCoords.length > 0) {
       faceCoords.forEach(function(coord, index) {
+        context.strokeStyle = "#fff";
+        context.lineWidth = 3;
         context.strokeRect(coord.x, coord.y, coord.width, coord.height);
       });
     }
@@ -73,7 +77,7 @@ function update() {
     faceCheck--;
     if (faceCheck == 0) {
       checkFace();
-      faceCheck = 10;
+      faceCheck = 15;
     }
   }
 }
@@ -108,8 +112,17 @@ function successCallback(stream) {
   } else {
     webcam.src = stream;
   }
+  webcam.addEventListener('play', function(e) {
+    canvas.height = $(video).height();
+    canvas.width = $(video).width();
+
+    littleCanvas.height = $(video).height() / scale;
+    littleCanvas.width = $(video).width() / scale;
+
+    backCanvas = document.createElement('canvas');
+    backContext = canvas.getContext('2d');
+  });
   webcam.play();
-  // document.getElementById('background').play();
 }
 
 function errorCallback(error){
