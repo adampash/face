@@ -50,7 +50,7 @@ class FaceDetectInstance : public pp::Instance {
               // cv::Mat img(cv::Size(width, height), CV_8UC1, pixels,
               //             cv::Mat::AUTO_STEP);
               cv::Mat img(cv::Size(width, height), CV_8UC4);
-              memcpy(img.ptr(), (void*) pixels,height * width * 4);
+              memcpy(img.ptr(), (void*) pixels, height * width * 4);
               array_buffer.Unmap();
               if (img.empty()) {
                 PostMessage("Mat Image is empty");
