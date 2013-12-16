@@ -37,17 +37,24 @@ class FaceDetectInstance : public pp::Instance {
             if (width > 0 && height > 0) {
               // uint32_t* pixels = static_cast<uint32_t*>(array_buffer.Map());
               // const cv::_InputArray* pix_pass = static_cast<cv::_InputArray*>(array_buffer.Map());
-              unsigned char* pixels = static_cast<unsigned char*>(array_buffer.Map());
+              // unsigned char* pixels = static_cast<unsigned char*>(array_buffer.Map());
+              uint32_t* pixels = static_cast<uint32_t*>(array_buffer.Map());
               // cv::Mat img = cv::imdecode(*pix_pass, 1);
               // cv::Mat img = cv::imdecode(array_buffer);
-              cv::Mat img(cv::Size(width, height), CV_64F, pixels, width);
+              // cv::Mat img(cv::Size(width, height), CV_8UC1, pixels,
+              //             cv::Mat::AUTO_STEP);
+              cv::Mat img(cv::Size(width, height), CV_8UC1);
+              memcpy(img.ptr(), (void*) pixels,height * width * 4);
               array_buffer.Unmap();
               if (img.empty()) {
                 PostMessage("Mat Image is empty");
               } else {
                 std::string result = detect_faces(img);
                 PostMessage(result);
-                // PostMessage(*pixels);
+                PostMessage(img.rows);
+                PostMessage(img.cols);
+                PostMessage(img.dims);
+                // PostMessage(pixels);
                 // PostMessage(img);
               }
             } else {
@@ -66,15 +73,20 @@ class FaceDetectInstance : public pp::Instance {
     // using namespace cv;
     std::string detect_faces(cv::Mat img) {
       cv::Mat imgbw;
-      // cv::normalize(img, imgbw, 0, 255, cv::NORM_MINMAX, CV_8UC1);
-      // PostMessage("You are detecting!!!");
+      cv::normalize(img, img, 0, 255, cv::NORM_MINMAX, CV_8UC1);
 
-      // //create a grayscale copy
-      // cv::cvtColor(img, imgbw, CV_BGR2GRAY); 
+      //create a grayscale copy
+      // PostMessage(CV_BGR2GRAY);
+      // cv::cvtColor(img, imgbw, CV_RGB2GRAY); 
 
-      // //apply histogram equalization
-      // cv::equalizeHist(imgbw, imgbw); 
+      //apply histogram equalization
+      cv::equalizeHist(imgbw, imgbw);
 
+      cv::vector<cv::Rect> faces;
+
+      //detect faces
+      cv::CascadeClassifier frontal_cascade;
+      frontal_cascade.detectMultiScale(imgbw, faces, 1.1, 1, 0|CV_HAAR_SCALE_IMAGE, cv::Size(5, 5));
       return "{\"foo\": \"bar\"}";
       // return img.dims;
     }
