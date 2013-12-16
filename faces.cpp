@@ -1,5 +1,6 @@
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/module.h"
+#include "ppapi/cpp/url_loader.h"
 #include "ppapi/cpp/var.h"
 #include <ppapi/cpp/var_array.h>
 #include <ppapi/cpp/var_array_buffer.h>
@@ -11,6 +12,8 @@
 
 #include <stdio.h>
 
+#include "url_loader_handler.h"
+
 std::string detect_faces(cv::Mat img);
 
 class FaceDetectInstance : public pp::Instance {
@@ -18,12 +21,6 @@ class FaceDetectInstance : public pp::Instance {
     explicit FaceDetectInstance(PP_Instance instance)
       : pp::Instance(instance) {}
     virtual ~FaceDetectInstance() {}
-
-    // initialize
-    virtual bool Init() {
-      PostMessage("Helloooo");
-      return true;
-    }
 
     // Handle message passed in from JavaScript
     virtual void HandleMessage(const pp::Var& message) {
@@ -41,17 +38,11 @@ class FaceDetectInstance : public pp::Instance {
           pp::VarArrayBuffer array_buffer(dictionary.Get("data"));
           if (!array_buffer.is_null()) {
             if (width > 0 && height > 0) {
-              // uint32_t* pixels = static_cast<uint32_t*>(array_buffer.Map());
-              // const cv::_InputArray* pix_pass = static_cast<cv::_InputArray*>(array_buffer.Map());
-              // unsigned char* pixels = static_cast<unsigned char*>(array_buffer.Map());
               uint32_t* pixels = static_cast<uint32_t*>(array_buffer.Map());
-              // cv::Mat img = cv::imdecode(*pix_pass, 1);
-              // cv::Mat img = cv::imdecode(array_buffer);
-              // cv::Mat img(cv::Size(width, height), CV_8UC1, pixels,
-              //             cv::Mat::AUTO_STEP);
               cv::Mat img(cv::Size(width, height), CV_8UC4);
               memcpy(img.ptr(), (void*) pixels, height * width * 4);
               array_buffer.Unmap();
+
               if (img.empty()) {
                 PostMessage("Mat Image is empty");
               } else {
@@ -67,6 +58,18 @@ class FaceDetectInstance : public pp::Instance {
           } else {
             PostMessage("No good. Array buffer is null.");
           }
+        } else if (action == "getCascade") {
+          PostMessage("Get that cascade");
+
+          // std::string url = dictionary.Get("url");
+          std::string url = "/cascades/haarcascade_frontalface_alt.xml";
+          URLLoaderHandler* handler = URLLoaderHandler::Create(this, url);
+          if (handler != NULL) {
+            // Starts asynchronous download. When download is finished or when an
+            // error occurs, |handler| posts the results back to the browser
+            // vis PostMessage and self-destroys.
+            handler->Start();
+          }
         } else {
           PostMessage("No supported action");
         }
@@ -77,7 +80,9 @@ class FaceDetectInstance : public pp::Instance {
     // using namespace cv;
     std::string detect_faces(cv::Mat img) {
       cv::CascadeClassifier frontal_cascade;
-      // if(!frontal_cascade.load("cascades/haarcascade_frontalface_alt.xml")) exit(-2);
+      if(!frontal_cascade.load("/cascades/haarcascade_frontalface_alt.xml")) {
+        return "FAILURE";
+      }
       cv::Mat imgbw;
       cv::normalize(img, img, 0, 255, cv::NORM_MINMAX, CV_8UC1);
 
