@@ -1,0 +1,63 @@
+# Updated by fix_deps.py
+newlib/Debug/faces_x86_32.o: faces.cpp \
+ /Users/ap/SDKs/nacl/pepper_31/include/ppapi/cpp/instance.h \
+ /Users/ap/SDKs/nacl/pepper_31/include/ppapi/c/pp_instance.h \
+ /Users/ap/SDKs/nacl/pepper_31/include/ppapi/c/pp_macros.h \
+ /Users/ap/SDKs/nacl/pepper_31/include/ppapi/c/pp_stdint.h \
+ /Users/ap/SDKs/nacl/pepper_31/include/ppapi/c/pp_resource.h \
+ /Users/ap/SDKs/nacl/pepper_31/include/ppapi/c/ppb_console.h \
+ /Users/ap/SDKs/nacl/pepper_31/include/ppapi/c/pp_bool.h \
+ /Users/ap/SDKs/nacl/pepper_31/include/ppapi/c/pp_var.h \
+ /Users/ap/SDKs/nacl/pepper_31/include/ppapi/cpp/instance_handle.h \
+ /Users/ap/SDKs/nacl/pepper_31/include/ppapi/cpp/view.h \
+ /Users/ap/SDKs/nacl/pepper_31/include/ppapi/cpp/resource.h \
+ /Users/ap/SDKs/nacl/pepper_31/include/ppapi/cpp/pass_ref.h \
+ /Users/ap/SDKs/nacl/pepper_31/include/ppapi/cpp/rect.h \
+ /Users/ap/SDKs/nacl/pepper_31/include/ppapi/c/pp_rect.h \
+ /Users/ap/SDKs/nacl/pepper_31/include/ppapi/c/pp_point.h \
+ /Users/ap/SDKs/nacl/pepper_31/include/ppapi/c/pp_size.h \
+ /Users/ap/SDKs/nacl/pepper_31/include/ppapi/cpp/point.h \
+ /Users/ap/SDKs/nacl/pepper_31/include/ppapi/cpp/size.h \
+ /Users/ap/SDKs/nacl/pepper_31/include/ppapi/cpp/logging.h \
+ /Users/ap/SDKs/nacl/pepper_31/include/ppapi/cpp/module.h \
+ /Users/ap/SDKs/nacl/pepper_31/include/ppapi/c/pp_module.h \
+ /Users/ap/SDKs/nacl/pepper_31/include/ppapi/c/ppb.h \
+ /Users/ap/SDKs/nacl/pepper_31/include/ppapi/c/ppb_core.h \
+ /Users/ap/SDKs/nacl/pepper_31/include/ppapi/c/pp_completion_callback.h \
+ /Users/ap/SDKs/nacl/pepper_31/include/ppapi/c/pp_time.h \
+ /Users/ap/SDKs/nacl/pepper_31/include/ppapi/cpp/core.h \
+ /Users/ap/SDKs/nacl/pepper_31/include/ppapi/cpp/var.h \
+ /Users/ap/SDKs/nacl/pepper_31/include/ppapi/cpp/var_array.h \
+ /Users/ap/SDKs/nacl/pepper_31/include/ppapi/cpp/var_array_buffer.h \
+ /Users/ap/SDKs/nacl/pepper_31/include/ppapi/cpp/var_dictionary.h
+faces.cpp:
+/Users/ap/SDKs/nacl/pepper_31/include/ppapi/cpp/instance.h:
+/Users/ap/SDKs/nacl/pepper_31/include/ppapi/c/pp_instance.h:
+/Users/ap/SDKs/nacl/pepper_31/include/ppapi/c/pp_macros.h:
+/Users/ap/SDKs/nacl/pepper_31/include/ppapi/c/pp_stdint.h:
+/Users/ap/SDKs/nacl/pepper_31/include/ppapi/c/pp_resource.h:
+/Users/ap/SDKs/nacl/pepper_31/include/ppapi/c/ppb_console.h:
+/Users/ap/SDKs/nacl/pepper_31/include/ppapi/c/pp_bool.h:
+/Users/ap/SDKs/nacl/pepper_31/include/ppapi/c/pp_var.h:
+/Users/ap/SDKs/nacl/pepper_31/include/ppapi/cpp/instance_handle.h:
+/Users/ap/SDKs/nacl/pepper_31/include/ppapi/cpp/view.h:
+/Users/ap/SDKs/nacl/pepper_31/include/ppapi/cpp/resource.h:
+/Users/ap/SDKs/nacl/pepper_31/include/ppapi/cpp/pass_ref.h:
+/Users/ap/SDKs/nacl/pepper_31/include/ppapi/cpp/rect.h:
+/Users/ap/SDKs/nacl/pepper_31/include/ppapi/c/pp_rect.h:
+/Users/ap/SDKs/nacl/pepper_31/include/ppapi/c/pp_point.h:
+/Users/ap/SDKs/nacl/pepper_31/include/ppapi/c/pp_size.h:
+/Users/ap/SDKs/nacl/pepper_31/include/ppapi/cpp/point.h:
+/Users/ap/SDKs/nacl/pepper_31/include/ppapi/cpp/size.h:
+/Users/ap/SDKs/nacl/pepper_31/include/ppapi/cpp/logging.h:
+/Users/ap/SDKs/nacl/pepper_31/include/ppapi/cpp/module.h:
+/Users/ap/SDKs/nacl/pepper_31/include/ppapi/c/pp_module.h:
+/Users/ap/SDKs/nacl/pepper_31/include/ppapi/c/ppb.h:
+/Users/ap/SDKs/nacl/pepper_31/include/ppapi/c/ppb_core.h:
+/Users/ap/SDKs/nacl/pepper_31/include/ppapi/c/pp_completion_callback.h:
+/Users/ap/SDKs/nacl/pepper_31/include/ppapi/c/pp_time.h:
+/Users/ap/SDKs/nacl/pepper_31/include/ppapi/cpp/core.h:
+/Users/ap/SDKs/nacl/pepper_31/include/ppapi/cpp/var.h:
+/Users/ap/SDKs/nacl/pepper_31/include/ppapi/cpp/var_array.h:
+/Users/ap/SDKs/nacl/pepper_31/include/ppapi/cpp/var_array_buffer.h:
+/Users/ap/SDKs/nacl/pepper_31/include/ppapi/cpp/var_dictionary.h:

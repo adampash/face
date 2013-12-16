@@ -1,97 +1,107 @@
+#include "ppapi/cpp/instance.h"
+#include "ppapi/cpp/module.h"
+#include "ppapi/cpp/var.h"
+#include <ppapi/cpp/var_array.h>
+#include <ppapi/cpp/var_array_buffer.h>
+#include <ppapi/cpp/var_dictionary.h>
+
 #include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/objdetect/objdetect.hpp>
+#include "opencv2/objdetect/objdetect.hpp"
 #include <opencv2/highgui/highgui.hpp>
 
-#include <iostream>
 #include <stdio.h>
-#include <string.h>
-#include <unistd.h>
 
-using namespace std;
-using namespace cv;
+std::string detect_faces(cv::Mat img);
 
-char buf[4096];
-char cbuf[4096];
-extern "C" char* detect_faces(char* input_file, char* output_file);
+class FaceDetectInstance : public pp::Instance {
+  public:
+    explicit FaceDetectInstance(PP_Instance instance)
+      : pp::Instance(instance) {}
+    virtual ~FaceDetectInstance() {}
 
-int main(int argc, char** argv) {
-  if(argc<2){
-    fprintf(stderr, "usage:\n%s <action> <image>\n%s <action> <image> <outimg>\n", argv[0], argv[0]);
-    fprintf(stderr, "Actions include 'detect' and 'crop'\n");
-    exit(-1);
-  }
-
-
-  int i = 0;
-  if (argv[1][i] != '\0') {
-    char letter = argv[1][i];
-
-    switch(letter) {
-      case 'c':
-        // crop(argv[2], argv[3]);
-        printf("Crop is currently removed");
-        break;
-      case 'd':
-        printf("%s", detect_faces(argv[2], argc<3 ? NULL : argv[3]));
-        break;
-      default:
-        printf("Erm, something went wrong");
+    // Handle message passed in from JavaScript
+    virtual void HandleMessage(const pp::Var& message) {
+      // ignore the message if it's not a dictionary
+      if (!message.is_dictionary()) {
+        PostMessage("No good. Not a dictionary");
+      } else {
+        // cast the dictionary
+        pp::VarDictionary dictionary(message);
+        std::string action = dictionary.Get("action").AsString();
+        if (action == "detect") {
+          // get data and convert it to cv::Mat type
+          int width = dictionary.Get("width").AsInt();
+          int height = dictionary.Get("height").AsInt();
+          pp::VarArrayBuffer array_buffer(dictionary.Get("data"));
+          if (!array_buffer.is_null()) {
+            if (width > 0 && height > 0) {
+              // uint32_t* pixels = static_cast<uint32_t*>(array_buffer.Map());
+              // const cv::_InputArray* pix_pass = static_cast<cv::_InputArray*>(array_buffer.Map());
+              unsigned char* pixels = static_cast<unsigned char*>(array_buffer.Map());
+              // cv::Mat img = cv::imdecode(*pix_pass, 1);
+              // cv::Mat img = cv::imdecode(array_buffer);
+              cv::Mat img(cv::Size(width, height), CV_64F, pixels, width);
+              array_buffer.Unmap();
+              if (img.empty()) {
+                PostMessage("Mat Image is empty");
+              } else {
+                std::string result = detect_faces(img);
+                PostMessage(result);
+                // PostMessage(*pixels);
+                // PostMessage(img);
+              }
+            } else {
+              PostMessage("No good. Width and height are messed up");
+            }
+          } else {
+            PostMessage("No good. Array buffer is null.");
+          }
+        } else {
+          PostMessage("No supported action");
+        }
+        PostMessage("Made it through");
+      }
     }
-    exit(0);
-  }
 
+    // using namespace cv;
+    std::string detect_faces(cv::Mat img) {
+      cv::Mat imgbw;
+      // cv::normalize(img, imgbw, 0, 255, cv::NORM_MINMAX, CV_8UC1);
+      // PostMessage("You are detecting!!!");
+
+      // //create a grayscale copy
+      // cv::cvtColor(img, imgbw, CV_BGR2GRAY); 
+
+      // //apply histogram equalization
+      // cv::equalizeHist(imgbw, imgbw); 
+
+      return "{\"foo\": \"bar\"}";
+      // return img.dims;
+    }
+
+    void logmsg(const char* pMsg){
+      fprintf(stdout,"logmsg: %s\n",pMsg);
+    }
+    void errormsg(const char* pMsg){
+      fprintf(stderr,"logerr: %s\n",pMsg);
+    }
+
+};
+
+class FaceDetectModule : public pp::Module {
+  public:
+    FaceDetectModule() : pp::Module() {}
+    virtual ~FaceDetectModule() {}
+
+    virtual pp::Instance* CreateInstance(PP_Instance instance) {
+      return new FaceDetectInstance(instance);
+    }
+};
+
+namespace pp {
+
+  Module* CreateModule() {
+    return new FaceDetectModule();
+  }
 }
 
-char* detect_faces(char* input_file, char* output_file) {
-  memset(buf, 0, 4096);
-  memset(cbuf, 0, 4096);
-  CascadeClassifier frontal_cascade;
-  CascadeClassifier profile_cascade;
-  CascadeClassifier eyes_cascade;
-
-  //load classifier cascade
-  // if(!profile_cascade.load("cascades/haarcascade_profileface.xml")) exit(-2);
-  // if(!frontal_cascade.load("cascades/lbpcascade_frontalface.xml")) exit(-2);
-  if(!frontal_cascade.load("cascades/haarcascade_frontalface_alt.xml")) exit(-2);
-
-  Mat imgbw, image = imread((string)input_file); //read image
-  if(image.empty()) exit(-3);
-
-  normalize(image, imgbw, 0, 255, NORM_MINMAX, CV_8UC1);
-
-  //create a grayscale copy
-  cvtColor(image, imgbw, CV_BGR2GRAY); 
-
-  //apply histogram equalization
-  equalizeHist(imgbw, imgbw); 
-
-  // for debugging purposes; see what image looks like before detection
-  // imwrite("sample.jpg", imgbw);
-
-  vector<Rect> faces;
-  // vector<Rect> profile_faces;
-
-  //detect faces
-  // frontal_cascade.detectMultiScale(imgbw, faces, 1.2, 2);
-  frontal_cascade.detectMultiScale(imgbw, faces, 1.1, 1, 0|CV_HAAR_SCALE_IMAGE, Size(5, 5));
-  // profile_cascade.detectMultiScale(imgbw, profile_faces, 1.2, 2);
-
-  // combine faces vectors
-  // faces.reserve(faces.size() + profile_faces.size());
-  // faces.insert(faces.end(), profile_faces.begin(), profile_faces.end());
-
-  for(unsigned int i = 0; i < faces.size(); i++){
-    Rect f = faces[i];
-
-    // to implement eye detection, see 
-    // http://docs.opencv.org/doc/tutorials/objdetect/cascade_classifier/cascade_classifier.html#cascade-classifier
-
-    //draw rectangles on the image where faces were detected
-    rectangle(image, Point(f.x, f.y), Point(f.x + f.width, f.y + f.height), Scalar(255, 0, 0), 4, 8);
-
-    //fill buffer with easy to parse face representation
-    sprintf(buf + strlen(buf), "%i;%i;%i;%in", f.x, f.y, f.width, f.height);
-  }
-  if(output_file) imwrite((string)output_file, image); //write output image
-  return buf;
-}

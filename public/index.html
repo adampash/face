@@ -35,19 +35,17 @@ body {
   background: rgba(20, 20, 100, 1);
 }
 </style>
+<script src="js/common.js"></script>
 <script src="js/jquery.js"></script>
-<script src="js/balls.js"></script>
 <script src="js/app.js"></script>
+<!-- <script src="js/app.old.js"></script> -->
 </head>
 
-<body>
+<body data-name="faces" data-tools="newlib glibc pnacl" data-configs="Debug Release" data-path="{tc}/{config}">
   <canvas id="main" style=""></canvas>
   <canvas id="little" style=""></canvas>
-  <!-- <canvas id="m_canvas" style=""></canvas> -->
-  <!-- <div class="toggles"> -->
-  <!--   <div id="removeBackground" class="toggle">removeBackground</div> -->
-  <!-- </div> -->
   <video id="video" height="700" width="1280" style="display:none;"></video>
+  <div id="listener"></div>
 </body>
 
 </html>

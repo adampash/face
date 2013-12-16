@@ -13,13 +13,24 @@ NACL_SDK_ROOT=$(HOME)/SDKs/nacl/pepper_31
 NACL_SDK_ROOT ?= $(abspath $(CURDIR)/../..)
 include $(NACL_SDK_ROOT)/tools/common.mk
 
-TARGET = part2
+# NACL_DEBUG_ENABLE=1
+# PPAPI_BROWSER_DEBUG=1
+# NACL_PLUGIN_DEBUG=1
+# NACL_PPAPI_PROXY_DEBUG=1
+# NACL_SRPC_DEBUG=255 (use a higher number for more verbose debug output)
+# NACLVERBOSITY=255
+# NACL_EXE_STDOUT=$(HOME)/tmp/nacl_stdout.log
+# NACL_EXE_STDERR=$(HOME)/tmp/nacl_stderr.log
+# NACL_EXE_STDOUT=DEBUG_ONLY:dev://postmessage
+# NACL_EXE_STDERR=DEBUG_ONLY:dev://postmessage
+
+TARGET = faces
 LIBS = $(DEPS) ppapi_cpp ppapi nacl_io \
 			 opencv_objdetect opencv_imgproc opencv_highgui \
 			 opencv_core z \
 			 jpeg png tiff
 
-CFLAGS = -Wall
+CFLAGS = -Wall -g -O0
 SOURCES = faces.cpp
 
 LDFLAGS = -pthread
