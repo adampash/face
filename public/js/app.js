@@ -1,10 +1,10 @@
-var canvas, backCanvas, context, backContext, webcam, lastData, circles, littleCanvas, littleContext;
+var canvas, backCanvas, context, backContext, webcam, lastData, circles, littleCanvas, littleContext, facesCollection;
 
 var faceCoords = [];
 var faceCheck = 9;
 var scale = 3;
 
-var drawAllFaces = false;
+var drawAllFaces = true;
 
 window.onload = function() {
   canvas = document.getElementById('main');
@@ -12,12 +12,15 @@ window.onload = function() {
   webcam = document.getElementById('video');
   littleCanvas = document.getElementById('little');
   littleContext = littleCanvas.getContext('2d');
+  backCanvas = document.createElement('canvas');
+  backContext = canvas.getContext('2d');
+
+  faceCollection = new Faces();
 }
 
 var dataURL;
 function checkFace() {
   dataURL = littleCanvas.toDataURL();
-  // dataURL = canvas.toDataURL();
 
   var blobBin = atob(dataURL.split(',')[1]);
   var array = [];
@@ -61,6 +64,10 @@ function closestFace(faces, newFace) {
 
 var Faces = function() {
   this.faces = [];
+}
+
+Faces.prototype.length = function() {
+  return this.faces.length;
 }
 
 Array.max = function( array ){
@@ -156,31 +163,96 @@ function isRunning() {
 function draw() {
   if (isRunning()) {
     clearWindow();
-    // backContext.translate(canvas.width, 0);
-    // backContext.scale(-1, 1);
-    context.drawImage(webcam,0,0);
+    backContext.drawImage(webcam,0,0);
     littleContext.drawImage(webcam,0,0, littleCanvas.width, littleCanvas.height);
-    // context.translate(canvas.width, 0);
-    // context.scale(-1, 1);
-    if (drawAllFaces) {
-      findFaces();
-      // if (typeof faceCollection == 'undefined') {
-      //   findFaces();
-      // }
-      faceCollection.faces.forEach(function(face, index) {
-        context.strokeStyle = 'rgba(255, 255, 255,' + face.certainty + ')';
-        context.lineWidth = 3;
-        context.strokeRect(face.x, face.y, Math.sqrt(face.area), Math.sqrt(face.area));
-      });
 
-    }
-    else if (faceCoords.length > 0) {
+    // if (drawAllFaces) {
+    //   findFaces();
+    //   // if (typeof faceCollection == 'undefined') {
+    //   //   findFaces();
+    //   // }
+    //   faceCollection.faces.forEach(function(face, index) {
+    //     context.strokeStyle = 'rgba(255, 255, 255,' + face.certainty + ')';
+    //     context.lineWidth = 3;
+    //     context.strokeRect(face.x, face.y, Math.sqrt(face.area), Math.sqrt(face.area));
+    //   });
+
+    // }
+    if (faceCoords.length > 0) {
       faceCoords[faceCoords.length - 1].forEach(function(coord, index) {
         context.strokeStyle = "#fff";
         context.lineWidth = 3;
         context.strokeRect(coord.x, coord.y, coord.width, coord.height);
       });
     }
+
+    // Grab the pixel data from the backing canvas
+    var idata = backContext.getImageData(0,0,canvas.width,canvas.height);
+    var data = idata.data;
+
+
+    // Loop through the pixels
+    for(var i = 0; i < data.length; i+=4) {
+      var r = data[i];
+      var g = data[i+1];
+      var b = data[i+2];
+      // green screen
+      // if (toggles.greenScreen) {
+      //   if (g > greenScreenData.g && b/g < greenScreenData.b && r/g < greenScreenData.r) {
+      //     data[i+3] = 0;
+      //   }
+      // }
+
+      // black and white
+      if (true) {
+        // 255 * 3 = 765
+        if (faceCollection.length() > 0) {
+          var brightness = (r + g + b)/3;
+          data[i] = brightness;
+          data[i+1] = brightness;
+          data[i+2] = brightness;
+        }
+      }
+      // big blur
+      // if (toggles.bigBlur) {
+      //   if (lastData) {
+      //     data[i]   = r+lastData[i]  *3 / 4;
+      //     data[i+1] = g+lastData[i+1]*3 / 4;
+      //     data[i+2] = b+lastData[i+2]*3 / 4;
+      //     // data[i+3] = r+lastData[i+3]*2 / 3;
+      //   }
+      // }
+      // average images/mini-blur
+      // if (toggles.smallBlur) {
+      //   if (lastData) {
+      //     // data[i] = r+lastData[i] / 2;
+      //     // data[i+1] = g+lastData[i+1] / 2;
+      //     // data[i+2] = b+lastData[i+2] / 2;
+      //     data[i+3] = r+lastData[i+3]*2 / 3;
+      //   }
+      // }
+      // cut out background
+      // if (toggles.noBG) {
+      //   if (g > 100) {
+      //     data[i+3] = 0;
+      //   }
+      // }
+      // inverse
+      // if (toggles.inverse) {
+      //   data[i] = 255 - data[i];
+      //   data[i+1] = 255 - data[i+1];
+      //   data[i+2] = 255 - data[i+2];
+      // }
+      // white screen
+      // if (toggles.whiteScreen) {
+      //   if (g > 200 && b > 200 && r > 200) {
+      //     data[i+3] = 0;
+      //   }
+      // }
+    }
+    idata.data = data;
+    lastData = data;
+    context.putImageData(idata, 0, 0);
   }
 }
 
