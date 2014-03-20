@@ -111,6 +111,7 @@ char* detect_faces(char* input_file, char* output_file) {
       imwrite((string)file, croppedFaceImage); //write output image
     }
   }
+  if (output_file) imwrite((string)output_file, image); //write output image
 
   return buf;
 }
