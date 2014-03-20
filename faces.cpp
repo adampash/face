@@ -80,9 +80,23 @@ char* detect_faces(char* input_file, char* output_file) {
   // faces.reserve(faces.size() + profile_faces.size());
   // faces.insert(faces.end(), profile_faces.begin(), profile_faces.end());
 
+  Mat croppedFaceImage;
   for(unsigned int i = 0; i < faces.size(); i++){
     Rect f = faces[i];
 
+
+    croppedFaceImage = imgbw(f).clone();
+
+    int imgCount = 1;
+    int dims = 1;
+    const int sizes[] = {256};
+    const int channels[] = {0};
+    float range[] = {0,256};
+    const float *ranges[] = {range};
+
+    Mat mask = Mat();
+    Mat hist;
+    calcHist(&croppedFaceImage, imgCount, channels, mask, hist, dims, sizes, ranges);
     // to implement eye detection, see 
     // http://docs.opencv.org/doc/tutorials/objdetect/cascade_classifier/cascade_classifier.html#cascade-classifier
 
@@ -91,7 +105,12 @@ char* detect_faces(char* input_file, char* output_file) {
 
     //fill buffer with easy to parse face representation
     sprintf(buf + strlen(buf), "%i;%i;%i;%in", f.x, f.y, f.width, f.height);
+    if(output_file) {
+      char* file;
+      sprintf(file, "output%i.jpg", i);
+      imwrite((string)file, croppedFaceImage); //write output image
+    }
   }
-  if(output_file) imwrite((string)output_file, image); //write output image
+
   return buf;
 }
