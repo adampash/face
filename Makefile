@@ -11,7 +11,7 @@ all:
 	# create shared library
 	g++ ${INCLUDES} -o lib/libfaces.so faces.o ${LIBS} ${FLAGS}
 	# create executable (in case you want to play with it directly)
-	# g++ ${INCLUDES} -o faces faces.o ${LIBS} ${FLAGS}
+	g++ ${INCLUDES} -o faces faces.o ${LIBS} ${FLAGS}
 
 cam:
 	g++ ${INCLUDES} -fpic -Wall -c test/cam.cpp
