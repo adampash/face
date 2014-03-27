@@ -85,18 +85,18 @@ char* detect_faces(char* input_file, char* output_file) {
     Rect f = faces[i];
 
 
-    croppedFaceImage = imgbw(f).clone();
+    // croppedFaceImage = imgbw(f).clone();
 
-    int imgCount = 1;
-    int dims = 1;
-    const int sizes[] = {256};
-    const int channels[] = {0};
-    float range[] = {0,256};
-    const float *ranges[] = {range};
+    // int imgCount = 1;
+    // int dims = 1;
+    // const int sizes[] = {256};
+    // const int channels[] = {0};
+    // float range[] = {0,256};
+    // const float *ranges[] = {range};
 
-    Mat mask = Mat();
-    Mat hist;
-    calcHist(&croppedFaceImage, imgCount, channels, mask, hist, dims, sizes, ranges);
+    // Mat mask = Mat();
+    // Mat hist;
+    // calcHist(&croppedFaceImage, imgCount, channels, mask, hist, dims, sizes, ranges);
     // to implement eye detection, see 
     // http://docs.opencv.org/doc/tutorials/objdetect/cascade_classifier/cascade_classifier.html#cascade-classifier
 

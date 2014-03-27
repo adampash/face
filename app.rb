@@ -1,15 +1,23 @@
 require 'sinatra'
 require 'json'
 require_relative 'lib/faces.rb'
+require 'sinatra/cross_origin'
+
+disable :protection
+
+configure do
+  enable :cross_origin
+end
 
 get '/' do
   File.read(File.join('public', 'index.html'))
 end
 
 post '/' do
-  puts params.to_s
+  # logger.info "HERE ARE PARAMS " + params.to_s
   image = params['upload'][:tempfile].path
-  # image = 'img.png'
+
   response = Faces.faces_in(image).to_json
+
   response
 end
