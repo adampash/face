@@ -15,6 +15,10 @@ end
 
 post '/' do
   # logger.info "HERE ARE PARAMS " + params.to_s
+  process_image params
+end
+
+def process_image(params)
   image = params['upload'][:tempfile].path
 
   response = Faces.faces_in(image).to_json
